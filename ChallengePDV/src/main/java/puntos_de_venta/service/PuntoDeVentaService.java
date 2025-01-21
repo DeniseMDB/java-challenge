@@ -1,5 +1,6 @@
 package puntos_de_venta.service;
 
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import static puntos_de_venta.utils.Common.*;
 
 @Service
+@Transactional
 public class PuntoDeVentaService {
 
     private final PuntoDeVentaRepository puntoDeVentaRepository;

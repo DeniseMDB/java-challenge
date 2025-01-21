@@ -1,8 +1,12 @@
 package puntos_de_venta.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Costos {
 
     @Id
