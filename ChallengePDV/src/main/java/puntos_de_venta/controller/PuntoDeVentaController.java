@@ -23,6 +23,11 @@ public class PuntoDeVentaController {
         return ResponseEntity.ok(puntoDeVentaService.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<PuntoDeVenta> findById(@PathVariable Long id) {
+        return puntoDeVentaService.findById(id);
+    }
+
     @PostMapping
     public ResponseEntity<String> addPuntoDeVenta(@RequestBody PuntoDeVentaDTO puntoDeVentaDTO) throws Exception {
         return puntoDeVentaService.savePuntoDeVenta(puntoDeVentaDTO);

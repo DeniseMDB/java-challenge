@@ -1,13 +1,9 @@
-package puntos_de_venta.dtos;
+package java_challenge.acreditaciones.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PuntoDeVentaDTO {
     private Long id;
     private String name;

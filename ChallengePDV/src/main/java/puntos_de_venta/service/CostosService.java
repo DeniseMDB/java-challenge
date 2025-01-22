@@ -28,19 +28,31 @@ public class CostosService {
         this.puntoDeVentaRepository = puntoDeVentaRepository;
     }
 
+    /**
+     * Retrieves all the costs stored in the database.
+     *
+     * @return a list of all costs.
+     */
     public List<Costos> findAll(){
         return costosRepository.findAll();
     }
 
+    /**
+     * Adds a new cost between two points of sale.
+     *
+     * @param costosDTO the data transfer object containing the cost information.
+     * @return a ResponseEntity indicating the result of the operation.
+     * @throws IllegalArgumentException if the price is below 0 or the cost already exists.
+     */
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
         if (costosDTO.price < 0) {
             throw new IllegalArgumentException("Price cannot under 0");
         }
 
-        PuntoDeVenta origin = validateExistence(costosDTO.originId);
+        PuntoDeVenta origin = validateExistence(costosDTO.getOriginId());
         PuntoDeVenta destination = validateExistence(costosDTO.destinationId);
 
-        if(costosRepository.existsByPointOfOriginIdAndPointOfDestinationId(costosDTO.originId, costosDTO.destinationId)){
+        if(costosRepository.existsByPointOfOriginIdAndPointOfDestinationId(costosDTO.getOriginId(), costosDTO.destinationId)){
             throw new IllegalArgumentException("The cost already exists");
         }
 
@@ -53,11 +65,26 @@ public class CostosService {
         return ResponseEntity.status(HttpStatus.CREATED).body(SUCCESFULLY_CREATED);
     }
 
+    /**
+     * Validates the existence of a point of sale by its ID.
+     *
+     * @param puntoDeVentaId the ID of the point of sale.
+     * @return the {@link PuntoDeVenta} entity if found.
+     * @throws NoSuchElementException if the point of sale does not exist.
+     */
     public PuntoDeVenta validateExistence(Long puntoDeVentaId) {
         return puntoDeVentaRepository.findById(puntoDeVentaId)
                 .orElseThrow(() -> new NoSuchElementException(String.format(PVD_NOT_FOUND, puntoDeVentaId)));
     }
 
+    /**
+     * Removes an existing cost between two points of sale.
+     *
+     * @param originId      the ID of the origin point of sale.
+     * @param destinationId the ID of the destination point of sale.
+     * @return a ResponseEntity indicating the result of the operation.
+     * @throws NoSuchElementException if the cost or points of sale do not exist.
+     */
     public ResponseEntity<String> removeCost(Long originId, Long destinationId) {
         PuntoDeVenta origin = validateExistence(originId);
         PuntoDeVenta destination = validateExistence(destinationId);
@@ -69,6 +96,12 @@ public class CostosService {
         return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_DELETED);
     }
 
+    /**
+     * Retrieves all direct connections from a given point of sale.
+     *
+     * @param originId the ID of the origin point of sale.
+     * @return a map containing the destination names as keys and their costs as values.
+     */
     public Map<String, Double> getDirectConnections(Long originId) {
         PuntoDeVenta origin = validateExistence(originId);
         List<Costos> directConnections = costosRepository.findByPointOfOrigin(origin);
@@ -78,7 +111,15 @@ public class CostosService {
                 Costos::getPrice
         ));
     }
-    
+
+    /**
+     * Finds the shortest path between two points of sale using Dijkstra's algorithm.
+     *
+     * @param originId      the ID of the origin point of sale.
+     * @param destinationId the ID of the destination point of sale.
+     * @return a {@link PathDTO} containing the shortest path and its total cost.
+     * @throws NoSuchElementException if no path is available.
+     */
     public PathDTO getShortestPath(Long originId, Long destinationId) {
         PuntoDeVenta origin = validateExistence(originId);
         PuntoDeVenta destination = validateExistence(destinationId);

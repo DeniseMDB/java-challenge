@@ -1,9 +1,16 @@
 package puntos_de_venta.dtos;
 
-import puntos_de_venta.model.PuntoDeVenta;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class CostosDTO {
-    public Long originId;
+    private Long originId;
     public Long destinationId;
     public Double price;
 }
