@@ -89,7 +89,7 @@ spring.cloud.gateway.discovery.locator.lower-case-service-id=true
 *Clona el repositorio:*
 
 ```
-git clone <url-del-repositorio>
+git clone https://github.com/DeniseMDB/java-challenge
 ```
 
 *Levanta los servicios:*
