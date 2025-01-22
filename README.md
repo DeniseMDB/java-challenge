@@ -102,3 +102,8 @@ mvn spring-boot:run
 ```
 
 *Accede al gateway en el puerto 8082 y utiliza Postman para probar los endpoints.*
+
+## Coverage Report
+![coverage report](https://github.com/user-attachments/assets/b884377e-0c91-4a80-910d-170400e3e07d)
+
+
