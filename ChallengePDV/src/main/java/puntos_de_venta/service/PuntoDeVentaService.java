@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import puntos_de_venta.dtos.PuntoDeVentaDTO;
+import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.PuntoDeVentaRepository;
 
@@ -42,7 +43,7 @@ public class PuntoDeVentaService {
      */
     public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) throws RuntimeException {
         if (puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName()).isPresent()){
-            throw new RuntimeException("The PDV already exists");
+            throw new RuntimeException(String.format(PVD_ALREADY_EXISTS, puntoDeVentaDTO.getId()));
         }
         try{
             PuntoDeVenta puntoDeVenta = new PuntoDeVenta();
@@ -69,7 +70,7 @@ public class PuntoDeVentaService {
             puntoDeVenta.setName(puntoDeVentaActualizado.getName());
             puntoDeVentaRepository.save(puntoDeVenta);
             return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_UPDATED);
-        } else {throw new NoSuchElementException("Punto de venta with ID " + id + " not found");}
+        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
     }
 
     /**
@@ -84,7 +85,7 @@ public class PuntoDeVentaService {
         if(puntoDeVentaOptional.isPresent()){
             puntoDeVentaRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_DELETED);
-        } else {throw new NoSuchElementException(String.format("PVD_%d_NOT_FOUND",id));}
+        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
     }
     
     /**
@@ -98,6 +99,6 @@ public class PuntoDeVentaService {
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
         if(puntoDeVentaOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.OK).body(puntoDeVentaOptional.get());
-        } else {throw new NoSuchElementException(String.format(PVD_NOT_FOUND, id));}
+        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
     }
 }

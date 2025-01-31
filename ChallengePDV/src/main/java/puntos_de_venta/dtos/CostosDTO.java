@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CostosDTO {
     private Long originId;
-    public Long destinationId;
-    public Double price;
+    private Long destinationId;
+    private Double price;
 }

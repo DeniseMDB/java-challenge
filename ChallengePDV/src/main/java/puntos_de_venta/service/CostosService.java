@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import puntos_de_venta.dtos.CostosDTO;
 import puntos_de_venta.dtos.PathDTO;
+import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
 import puntos_de_venta.model.Costos;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.CostosRepository;
@@ -45,21 +46,21 @@ public class CostosService {
      * @throws IllegalArgumentException if the price is below 0 or the cost already exists.
      */
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
-        if (costosDTO.price < 0) {
+        if (costosDTO.getPrice() < 0) {
             throw new IllegalArgumentException("Price cannot under 0");
         }
 
         PuntoDeVenta origin = validateExistence(costosDTO.getOriginId());
-        PuntoDeVenta destination = validateExistence(costosDTO.destinationId);
+        PuntoDeVenta destination = validateExistence(costosDTO.getDestinationId());
 
-        if(costosRepository.existsByPointOfOriginIdAndPointOfDestinationId(costosDTO.getOriginId(), costosDTO.destinationId)){
+        if(costosRepository.existsByPointOfOriginIdAndPointOfDestinationId(costosDTO.getOriginId(), costosDTO.getDestinationId())){
             throw new IllegalArgumentException("The cost already exists");
         }
 
         Costos costos = new Costos();
         costos.setPointOfOrigin(origin);
         costos.setPointOfDestination(destination);
-        costos.setPrice(costosDTO.price);
+        costos.setPrice(costosDTO.getPrice());
         costosRepository.save(costos);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(SUCCESFULLY_CREATED);
@@ -74,7 +75,7 @@ public class CostosService {
      */
     public PuntoDeVenta validateExistence(Long puntoDeVentaId) {
         return puntoDeVentaRepository.findById(puntoDeVentaId)
-                .orElseThrow(() -> new NoSuchElementException(String.format(PVD_NOT_FOUND, puntoDeVentaId)));
+                .orElseThrow(() -> new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,puntoDeVentaId)));
     }
 
     /**
@@ -144,8 +145,7 @@ public class CostosService {
                     prices.put(neighbor, newPrice);
                     previousNodes.put(neighbor, current);
                     queue.add(neighbor);
-                }
-            });
+                }});
         }
 
         if (!prices.containsKey(destination) || prices.get(destination) == Double.MAX_VALUE) {
