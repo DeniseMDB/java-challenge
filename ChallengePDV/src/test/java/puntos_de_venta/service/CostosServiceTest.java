@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import puntos_de_venta.dtos.CostosDTO;
 import puntos_de_venta.dtos.PathDTO;
+import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
 import puntos_de_venta.model.Costos;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.CostosRepository;
@@ -18,7 +19,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class CostosServiceTest {
@@ -61,6 +61,105 @@ class CostosServiceTest {
     }
 
     @Test
+    void findAll_shouldReturnAllCosts() {
+        // Given
+        List<Costos> costosList = Arrays.asList(new Costos(), new Costos());
+        given(costosRepository.findAll()).willReturn(costosList);
+
+        // When
+        List<Costos> result = costosService.findAll();
+
+        // Then
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        //verify(costosRepository, times(1)).findAll();
+    }
+
+    @Test
+    void removeCost_shouldRemoveCostSuccessfully() {
+        // Given
+        PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
+        PuntoDeVenta destination = new PuntoDeVenta(2L, "Destination");
+        Costos cost = new Costos(1L, origin, destination, 100.0);
+
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(origin));
+        given(puntoDeVentaRepository.findById(2L)).willReturn(Optional.of(destination));
+        given(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)).willReturn(Optional.of(cost));
+
+        // When
+        ResponseEntity<String> response = costosService.removeCost(1L, 2L);
+
+        // Then
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("SUCCESFULLY_DELETED", response.getBody());
+    }
+
+    @Test
+    void removeCost_shouldThrowExceptionWhenCostNotFound() {
+        // Given
+        PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
+        PuntoDeVenta destination = new PuntoDeVenta(2L, "Destination");
+
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(origin));
+        given(puntoDeVentaRepository.findById(2L)).willReturn(Optional.of(destination));
+        given(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)).willReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(NoSuchElementException.class, () -> costosService.removeCost(1L, 2L));
+    }
+
+    @Test
+    void getDirectConnections_shouldReturnConnections() {
+        // Given
+        PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
+        PuntoDeVenta destination = new PuntoDeVenta(2L, "Destination");
+        Costos cost = new Costos(1L, origin, destination, 50.0);
+
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(origin));
+        given(costosRepository.findByPointOfOrigin(origin)).willReturn(Collections.singletonList(cost));
+
+        // When
+        Map<String, Double> result = costosService.getDirectConnections(1L);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(50.0, result.get("Destination"));
+    }
+
+    @Test
+    void getDirectConnections_shouldThrowExceptionWhenOriginNotFound() {
+        // Given
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(PuntoDeVentaNotFoundException.class, () -> costosService.getDirectConnections(1L));
+    }
+
+    @Test
+    void validateExistence_shouldReturnPuntoDeVenta() {
+        // Given
+        PuntoDeVenta puntoDeVenta = new PuntoDeVenta(1L, "Origin");
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(puntoDeVenta));
+
+        // When
+        PuntoDeVenta result = costosService.validateExistence(1L);
+
+        // Then
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+    }
+
+    @Test
+    void validateExistence_shouldThrowExceptionWhenNotFound() {
+        // Given
+        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.empty());
+
+        // When / Then
+        assertThrows(PuntoDeVentaNotFoundException.class, () -> costosService.validateExistence(1L));
+    }
+
+    @Test
     void getShortestPath_shouldReturnShortestPath() {
         // Given
         PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
@@ -98,3 +197,4 @@ class CostosServiceTest {
         assertThrows(NoSuchElementException.class, () -> costosService.getShortestPath(1L, 2L));
     }
 }
+

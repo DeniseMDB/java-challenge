@@ -91,7 +91,7 @@ public class CostosService {
         PuntoDeVenta destination = validateExistence(destinationId);
 
         Optional<Costos> cost = Optional.ofNullable(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)
-                .orElseThrow(() -> new NoSuchElementException("Cost not found")));
+                .orElseThrow(() -> new NoSuchElementException("COST NOT FOUND")));
 
         costosRepository.deleteById(cost.get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_DELETED);

@@ -29,7 +29,7 @@ public class PuntoDeVentaController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addPuntoDeVenta(@RequestBody PuntoDeVentaDTO puntoDeVentaDTO) throws Exception {
+    public ResponseEntity<String> addPuntoDeVenta(@RequestBody PuntoDeVentaDTO puntoDeVentaDTO) {
         return puntoDeVentaService.savePuntoDeVenta(puntoDeVentaDTO);
     }
 
