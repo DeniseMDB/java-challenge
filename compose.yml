@@ -23,6 +23,8 @@ services:
       MYSQL_ROOT_PASSWORD: 1234
   challenge-pdv:
     container_name: challenge-pdv
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery-server:8010/eureka
     build:
       context: ./ChallengePDV/
       dockerfile: Dockerfile
@@ -34,6 +36,9 @@ services:
       - mysql8
   acreditaciones:
     container_name: acreditaciones
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery-server:8010/eureka
+      spring.datasource.url: jdbc:mysql://mysql8:3306/challenge
     build:
       context: ./acreditaciones/
       dockerfile: Dockerfile
@@ -44,6 +49,8 @@ services:
       - challenge-pdv
   apigateway:
     container_name: api-gateway
+    environment:
+      eureka.client.serviceUrl.defaultZone: http://discovery-server:8010/eureka
     build:
       context: ./ApiGateway/ApiGateway/
       dockerfile: Dockerfile
