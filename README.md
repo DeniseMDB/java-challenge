@@ -111,4 +111,8 @@ docker-compose up -d
 **Servicio Challenge-PVD**
 ![coverage report](https://github.com/user-attachments/assets/1dfbb07f-c5cd-472e-84da-33d7fcf744a1)
 
+## Diagrama
+![diagrama](https://github.com/user-attachments/assets/62cfe033-3f1f-4116-a9a3-73c5d947cd33)
+
+
 
