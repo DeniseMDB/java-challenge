@@ -1,0 +1,6 @@
+puntos_de_venta\exceptions\ControllerExceptionHandlerTest.class
+puntos_de_venta\controller\CostosControllerTest.class
+puntos_de_venta\controller\PuntoDeVentaControllerTest.class
+puntos_de_venta\ChallengePdvApplicationTests.class
+puntos_de_venta\service\CostosServiceTest.class
+puntos_de_venta\service\PuntoDeVentaServiceTest.class

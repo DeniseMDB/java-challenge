@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: puntos_de_venta.service.CostosServiceTest
+-------------------------------------------------------------------------------
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.491 s -- in puntos_de_venta.service.CostosServiceTest

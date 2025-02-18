@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: java_challenge.DiscoveryServer.DiscoveryServerApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 29.29 s -- in java_challenge.DiscoveryServer.DiscoveryServerApplicationTests
