@@ -13,12 +13,10 @@ import puntos_de_venta.service.PuntoDeVentaService;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.BDDMockito.given;
-import static puntos_de_venta.utils.Common.SUCCESFULLY_DELETED;
 
 
 @ExtendWith(MockitoExtension .class)

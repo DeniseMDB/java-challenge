@@ -1,5 +1,11 @@
-FROM amazoncorretto:21-alpine-jdk
+FROM maven:3.9.9-eclipse-temurin-23-alpine AS builder
 WORKDIR /app
-ADD ./target/acreditaciones-0.0.1-SNAPSHOT.jar acreditaciones.jar
+COPY pom.xml .
+RUN mvn dependency:go-offline
+COPY src ./src
+RUN mvn clean package
 
-ENTRYPOINT ["java", "-jar", "acreditaciones.jar"]
+FROM eclipse-temurin:21-jdk-alpine-3.21
+WORKDIR /app
+COPY --from=builder /app/target/*.jar acreditaciones.jar
+CMD ["java", "-jar", "acreditaciones.jar"]

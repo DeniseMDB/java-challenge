@@ -1,6 +1,5 @@
 package java_challenge.acreditaciones.service;
 
-import jakarta.ws.rs.NotFoundException;
 import java_challenge.acreditaciones.dto.PuntoDeVentaDTO;
 import java_challenge.acreditaciones.model.Acreditacion;
 import java_challenge.acreditaciones.repository.AcreditacionRepository;
@@ -50,7 +49,7 @@ class AcreditacionServiceTest {
         ResponseEntity<Acreditacion> response = acreditacionService.saveAcreditacion(cost, id);
 
         // Then
-        assertEquals(201, response.getStatusCodeValue());
+        assertEquals(201, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(id, response.getBody().getPuntoDeVentaId());
         assertEquals("Punto de Venta Test", response.getBody().getNamePuntoDeVenta());
@@ -96,7 +95,7 @@ class AcreditacionServiceTest {
         ResponseEntity<List<Acreditacion>> response = acreditacionService.findAll();
 
         // Then
-        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(2, response.getBody().size());
         verify(acreditacionRepository, times(1)).findAll();
