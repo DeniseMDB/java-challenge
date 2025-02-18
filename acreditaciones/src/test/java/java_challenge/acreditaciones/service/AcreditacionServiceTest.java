@@ -57,7 +57,7 @@ class AcreditacionServiceTest {
         assertEquals(cost, response.getBody().getCost());
         verify(acreditacionRepository, times(1)).save(any(Acreditacion.class));
     }
-    /**
+
     @Test
     void givenInvalidId_whenSaveAcreditacion_thenThrowsNoSuchElementException() {
         // Given
@@ -67,11 +67,9 @@ class AcreditacionServiceTest {
         when(restTemplate.getForObject(anyString(), eq(PuntoDeVentaDTO.class))).thenReturn(null);
 
         // When & Then
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> acreditacionService.saveAcreditacion(cost, id));
-        assertTrue(exception.getMessage().contains(String.format("PVD_%d_NOT_FOUND",1L)));
-        verify(acreditacionRepository, never()).save(any(Acreditacion.class));
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class, () -> acreditacionService.saveAcreditacion(cost, id));
+        assertEquals(String.format("PVD_%d_NOT_FOUND", id), exception.getMessage());
     }
-     */
 
     @Test
     void givenAcreditacionesInRepository_whenFindAll_thenReturnsListOfAcreditaciones() {

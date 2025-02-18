@@ -1,6 +1,8 @@
 package puntos_de_venta.service;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import static puntos_de_venta.utils.Common.*;
 public class PuntoDeVentaService {
 
     private final PuntoDeVentaRepository puntoDeVentaRepository;
+    private static final Logger log = LoggerFactory.getLogger(PuntoDeVentaService.class);
 
     public PuntoDeVentaService(PuntoDeVentaRepository puntoDeVentaRepository) {
         this.puntoDeVentaRepository = puntoDeVentaRepository;
@@ -33,6 +36,11 @@ public class PuntoDeVentaService {
      * @return a list of all points of sale.
      */
     public List<PuntoDeVenta> findAll() {
+        log.info("Retrieving all points of sale");
+        List<PuntoDeVenta> puntosDeVenta = puntoDeVentaRepository.findAll();
+        if (puntosDeVenta.isEmpty()) {
+            throw new PuntoDeVentaNotFoundException("NO PDV FOUND");
+        }
         return (List<PuntoDeVenta>) puntoDeVentaRepository.findAll();
     }
 
@@ -43,7 +51,8 @@ public class PuntoDeVentaService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws RuntimeException if a point of sale with the same name already exists.
      */
-    public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) throws RuntimeException {
+    public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
+        log.info("Adding new point of sale: Name = {}", puntoDeVentaDTO.getName());
         if (puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName()).isPresent()){
             throw new PuntoDeVentaAlreadyExistsException(String.format(PVD_ALREADY_EXISTS, puntoDeVentaDTO.getId()));
         }
@@ -56,12 +65,13 @@ public class PuntoDeVentaService {
     /**
      * Updates an existing point of sale in the database.
      *
-     * @param id                    the ID of the point of sale to update.
+     * @param id the ID of the point of sale to update.
      * @param puntoDeVentaActualizado the updated point of sale information.
      * @return a ResponseEntity indicating the result of the operation.
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     public ResponseEntity<String> updatePuntoDeVenta(Long id, PuntoDeVentaDTO puntoDeVentaActualizado) {
+        log.info("Updating point of sale with ID = {} ", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
         if(puntoDeVentaOptional.isPresent()){
             PuntoDeVenta puntoDeVenta = puntoDeVentaOptional.get();
@@ -79,6 +89,7 @@ public class PuntoDeVentaService {
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     public ResponseEntity<String> deletePuntoDeVenta(Long id) {
+        log.info("Deleting point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
         if(puntoDeVentaOptional.isPresent()){
             puntoDeVentaRepository.deleteById(id);
@@ -94,6 +105,7 @@ public class PuntoDeVentaService {
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     public ResponseEntity<PuntoDeVenta> findById(Long id) {
+        log.info("Retrieving point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
         if(puntoDeVentaOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.OK).body(puntoDeVentaOptional.get());

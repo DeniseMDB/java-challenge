@@ -1,7 +1,8 @@
 package puntos_de_venta.service;
 
 import jakarta.transaction.Transactional;
-import jakarta.ws.rs.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class CostosService {
 
     private final CostosRepository costosRepository;
     private final PuntoDeVentaRepository puntoDeVentaRepository;
+    private static final Logger log = LoggerFactory.getLogger(CostosService.class);
 
     public CostosService(CostosRepository costosRepository, PuntoDeVentaRepository puntoDeVentaRepository) {
         this.costosRepository = costosRepository;
@@ -36,9 +38,10 @@ public class CostosService {
      * @return a list of all costs.
      */
     public ResponseEntity<List<Costos>> findAll(){
+        log.info("Retrieving all costs");
         List<Costos> costos = costosRepository.findAll();
         if(costos.isEmpty()){
-            throw new NotFoundException("NO COSTOS FOUND");
+            throw new NoSuchElementException("NO COSTOS FOUND");
         }
         return ResponseEntity.ok(costos);
     }
@@ -51,6 +54,8 @@ public class CostosService {
      * @throws IllegalArgumentException if the price is below 0 or the cost already exists.
      */
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
+        log.info("Adding new cost: Origin ID = {}, Destination ID = {}, Cost = {}",
+                costosDTO.getOriginId(), costosDTO.getDestinationId(), costosDTO.getPrice());
         if (costosDTO.getPrice() < 0) {
             throw new IllegalArgumentException("Price cannot under 0");
         }
@@ -92,6 +97,7 @@ public class CostosService {
      * @throws NoSuchElementException if the cost or points of sale do not exist.
      */
     public ResponseEntity<String> removeCost(Long originId, Long destinationId) {
+        log.info("Removing cost: Origin ID = {}, Destination ID = {}", originId, destinationId);
         PuntoDeVenta origin = validateExistence(originId);
         PuntoDeVenta destination = validateExistence(destinationId);
 
@@ -109,6 +115,7 @@ public class CostosService {
      * @return a map containing the destination names as keys and their costs as values.
      */
     public Map<String, Double> getDirectConnections(Long originId) {
+        log.info("Retrieving direct connections for Origin ID = {}", originId);
         PuntoDeVenta origin = validateExistence(originId);
         List<Costos> directConnections = costosRepository.findByPointOfOrigin(origin);
 
@@ -127,6 +134,7 @@ public class CostosService {
      * @throws NoSuchElementException if no path is available.
      */
     public PathDTO getShortestPath(Long originId, Long destinationId) {
+        log.info("Calculating shortest path: Origin ID = {}, Destination ID = {}", originId, destinationId);
         PuntoDeVenta origin = validateExistence(originId);
         PuntoDeVenta destination = validateExistence(destinationId);
         Map<PuntoDeVenta, Double> prices = new HashMap<>();
