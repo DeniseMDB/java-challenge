@@ -1,6 +1,7 @@
 package java_challenge.acreditaciones.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import java_challenge.acreditaciones.dto.PuntoDeVentaDTO;
 import java_challenge.acreditaciones.model.Acreditacion;
 import java_challenge.acreditaciones.repository.AcreditacionRepository;
@@ -12,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import static java_challenge.acreditaciones.utils.CommonConstants.CHALLENGE_PVD_URL;
 import static java_challenge.acreditaciones.utils.CommonConstants.PVD_NOT_FOUND;
@@ -34,7 +36,7 @@ public class AcreditacionService {
         String challengePDV = String.format(CHALLENGE_PVD_URL, id);
         PuntoDeVentaDTO puntoDeVentaDTO = restTemplate.getForObject(challengePDV, PuntoDeVentaDTO.class);
         if (puntoDeVentaDTO == null) {
-            throw new NoSuchElementException(String.format(PVD_NOT_FOUND, id));
+            throw new NotFoundException(String.format(PVD_NOT_FOUND, id));
         }
 
         acreditacion.setPuntoDeVentaId(puntoDeVentaDTO.getId());
@@ -46,6 +48,10 @@ public class AcreditacionService {
     }
 
     public ResponseEntity<List<Acreditacion>> findAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(acreditacionRepository.findAll());
+        List<Acreditacion> acreditaciones = acreditacionRepository.findAll();
+        if (acreditaciones.isEmpty()){
+            throw new NotFoundException("NO ACREDITACIONES FOUND");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(acreditaciones);
     }
 }

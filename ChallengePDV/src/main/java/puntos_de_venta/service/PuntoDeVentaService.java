@@ -1,10 +1,12 @@
 package puntos_de_venta.service;
 
 import jakarta.transaction.Transactional;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import puntos_de_venta.dtos.PuntoDeVentaDTO;
+import puntos_de_venta.exceptions.PuntoDeVentaAlreadyExistsException;
 import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.PuntoDeVentaRepository;
@@ -43,16 +45,12 @@ public class PuntoDeVentaService {
      */
     public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) throws RuntimeException {
         if (puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName()).isPresent()){
-            throw new RuntimeException(String.format(PVD_ALREADY_EXISTS, puntoDeVentaDTO.getId()));
+            throw new PuntoDeVentaAlreadyExistsException(String.format(PVD_ALREADY_EXISTS, puntoDeVentaDTO.getId()));
         }
-        try{
             PuntoDeVenta puntoDeVenta = new PuntoDeVenta();
             puntoDeVenta.setName(puntoDeVentaDTO.getName());
             puntoDeVentaRepository.save(puntoDeVenta);
             return ResponseEntity.status(HttpStatus.CREATED).body(SUCCESFULLY_CREATED);
-        }catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
     }
 
     /**

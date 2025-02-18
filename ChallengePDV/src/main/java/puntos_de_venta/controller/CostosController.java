@@ -1,5 +1,6 @@
 package puntos_de_venta.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import puntos_de_venta.dtos.CostosDTO;
@@ -22,11 +23,11 @@ public class CostosController {
 
     @GetMapping
     public ResponseEntity<List<Costos>> findAll() {
-        return ResponseEntity.ok(costosService.findAll());
+        return costosService.findAll();
     }
 
     @PostMapping
-    public ResponseEntity<String> addCost(@RequestBody CostosDTO costosDTO) {
+    public ResponseEntity<String> addCost(@RequestBody @Valid CostosDTO costosDTO) {
         return costosService.addCost(costosDTO);
     }
 

@@ -67,12 +67,11 @@ class CostosServiceTest {
         given(costosRepository.findAll()).willReturn(costosList);
 
         // When
-        List<Costos> result = costosService.findAll();
+        ResponseEntity<List<Costos>> result = costosService.findAll();
 
         // Then
         assertNotNull(result);
-        assertEquals(2, result.size());
-        //verify(costosRepository, times(1)).findAll();
+        assertEquals(2, result.getBody().size());
     }
 
     @Test

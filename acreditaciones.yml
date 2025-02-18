@@ -1,0 +1,88 @@
+openapi: 3.0.3
+info:
+  title: Acreditaciones API
+  description: API para gestionar acreditaciones asociadas a puntos de venta.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8082
+    description: ApiGateway
+
+paths:
+  /acreditacion:
+    post:
+      summary: Crear una nueva acreditación
+      tags:
+        - Acreditaciones
+      parameters:
+        - name: cost
+          in: query
+          description: Costo de la acreditación
+          required: true
+          schema:
+            type: number
+        - name: id
+          in: query
+          description: ID del punto de venta
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Acreditación creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Acreditacion'
+        '404':
+          description: Punto de venta not found.
+    get:
+      summary: Obtener todas las acreditaciones
+      tags:
+        - Acreditaciones
+      responses:
+        '200':
+          description: Lista de todas las acreditaciones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Acreditacion'
+        '404':
+          description: Acreditaciones not found
+
+components:
+  schemas:
+    Acreditacion:
+      type: object
+      properties:
+        id:
+          type: integer
+        cost:
+          type: number
+        puntoDeVentaId:
+          type: integer
+        namePuntoDeVenta:
+          type: string
+        date:
+          type: string
+          format: date-time
+    AcreditacionDTO:
+      type: object
+      properties:
+        cost:
+          type: number
+        puntoDeVentaId:
+          type: integer
+        namePuntoDeVenta:
+          type: string
+        date:
+          type: string
+          format: date-time
+    PuntoDeVentaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string

@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Costos y Punto de Venta API
+  description: API para gestionar costos entre puntos de venta y los propios puntos de venta.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Servidor local de desarrollo
+
+paths:
+  /costos:
+    get:
+      summary: Obtener todos los costos
+      tags:
+        - Costos
+      responses:
+        '200':
+          description: Lista de costos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Costos'
+    post:
+      summary: Agregar un nuevo costo
+      tags:
+        - Costos
+      requestBody:
+        description: Detalles del costo a agregar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CostosDTO'
+      responses:
+        '201':
+          description: Costo agregado exitosamente
+        '400':
+          description: Error en la solicitud
+    delete:
+      summary: Eliminar un costo
+      tags:
+        - Costos
+      parameters:
+        - name: originId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: destinationId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Costo eliminado exitosamente
+        '404':
+          description: Costo no encontrado
+
+  /costos/direct:
+    get:
+      summary: Obtener conexiones directas desde un punto de origen
+      tags:
+        - Costos
+      parameters:
+        - name: originId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Conexiones directas encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+
+  /costos/shortest-path:
+    get:
+      summary: Obtener la ruta más corta entre dos puntos
+      tags:
+        - Costos
+      parameters:
+        - name: originId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: destinationId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Ruta más corta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PathDTO'
+
+  /punto-de-venta:
+    get:
+      summary: Obtener todos los puntos de venta
+      tags:
+        - Puntos de Venta
+      responses:
+        '200':
+          description: Lista de puntos de venta
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PuntoDeVenta'
+    post:
+      summary: Agregar un punto de venta
+      tags:
+        - Puntos de Venta
+      requestBody:
+        description: Detalles del punto de venta a agregar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PuntoDeVentaDTO'
+      responses:
+        '201':
+          description: Punto de venta agregado exitosamente
+        '400':
+          description: Error en la solicitud
+
+  /punto-de-venta/{id}:
+    get:
+      summary: Obtener un punto de venta por ID
+      tags:
+        - Puntos de Venta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Punto de venta encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PuntoDeVenta'
+        '404':
+          description: Punto de venta no encontrado
+    put:
+      summary: Actualizar un punto de venta por ID
+      tags:
+        - Puntos de Venta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        description: Detalles del punto de venta a actualizar
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PuntoDeVentaDTO'
+      responses:
+        '200':
+          description: Punto de venta actualizado exitosamente
+        '404':
+          description: Punto de venta no encontrado
+    delete:
+      summary: Eliminar un punto de venta por ID
+      tags:
+        - Puntos de Venta
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Punto de venta eliminado exitosamente
+        '404':
+          description: Punto de venta no encontrado
+
+components:
+  schemas:
+    Costos:
+      type: object
+      properties:
+        id:
+          type: integer
+        pointOfOrigin:
+          $ref: '#/components/schemas/PuntoDeVenta'
+        pointOfDestination:
+          $ref: '#/components/schemas/PuntoDeVenta'
+        price:
+          type: number
+    PuntoDeVenta:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    CostosDTO:
+      type: object
+      properties:
+        originId:
+          type: integer
+        destinationId:
+          type: integer
+        price:
+          type: number
+    PuntoDeVentaDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+    PathDTO:
+      type: object
+      properties:
+        path:
+          type: array
+          items:
+            type: string
+        totalCost:
+          type: number

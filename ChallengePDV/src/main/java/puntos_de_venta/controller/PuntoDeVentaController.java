@@ -1,5 +1,6 @@
 package puntos_de_venta.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import puntos_de_venta.dtos.PuntoDeVentaDTO;
@@ -29,7 +30,7 @@ public class PuntoDeVentaController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addPuntoDeVenta(@RequestBody PuntoDeVentaDTO puntoDeVentaDTO) {
+    public ResponseEntity<String> addPuntoDeVenta(@RequestBody @Valid PuntoDeVentaDTO puntoDeVentaDTO) {
         return puntoDeVentaService.savePuntoDeVenta(puntoDeVentaDTO);
     }
 

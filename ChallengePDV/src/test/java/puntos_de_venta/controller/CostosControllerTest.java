@@ -32,7 +32,7 @@ class CostosControllerTest {
     void findAll_shouldReturnListOfCosts() {
         // Given
         List<Costos> costosList = Arrays.asList(new Costos(), new Costos());
-        given(costosService.findAll()).willReturn(costosList);
+        given(costosService.findAll()).willReturn(ResponseEntity.ok(costosList));
 
         // When
         ResponseEntity<List<Costos>> response = costosController.findAll();

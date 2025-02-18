@@ -1,12 +1,6 @@
-FROM maven:3.9.9-eclipse-temurin-23-alpine AS builder
+FROM amazoncorretto:21-alpine-jdk
 WORKDIR /app
-COPY pom.xml .
-RUN mvn dependency:go-offline
-COPY src ./src
-RUN mvn clean package
+EXPOSE 8020
+ADD ./target/DiscoveryServer-0.0.1-SNAPSHOT.jar discovery-server.jar
 
-FROM eclipse-temurin:21-jdk-alpine-3.21
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-EXPOSE 8010
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "discovery-server.jar"]

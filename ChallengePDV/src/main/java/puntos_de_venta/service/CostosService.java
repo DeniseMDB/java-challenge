@@ -1,6 +1,7 @@
 package puntos_de_venta.service;
 
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -34,8 +35,12 @@ public class CostosService {
      *
      * @return a list of all costs.
      */
-    public List<Costos> findAll(){
-        return costosRepository.findAll();
+    public ResponseEntity<List<Costos>> findAll(){
+        List<Costos> costos = costosRepository.findAll();
+        if(costos.isEmpty()){
+            throw new NotFoundException("NO COSTOS FOUND");
+        }
+        return ResponseEntity.ok(costos);
     }
 
     /**

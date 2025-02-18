@@ -31,4 +31,15 @@ public class ControllerExceptionHandler {
                 request.getDescription(false));
         return message;
     }
+
+    @ExceptionHandler(PuntoDeVentaAlreadyExistsException.class)
+    @ResponseStatus(value = HttpStatus.FORBIDDEN)
+    public  ErrorMessage puntoDeVentaAlreadyExistsExceptionHandler(PuntoDeVentaAlreadyExistsException ex, WebRequest request) {
+        ErrorMessage message = new ErrorMessage(
+                HttpStatus.NOT_FOUND.value(),
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false));
+        return message;
+    }
 }
