@@ -131,10 +131,11 @@ localhost:8082/acreditaciones/v1/acreditacion?cost=50.0&id=1
 ![coverage report](https://github.com/user-attachments/assets/1dfbb07f-c5cd-472e-84da-33d7fcf744a1)
 
 ## Diagrama
-![diagrama2](https://github.com/user-attachments/assets/36efbaa7-3889-4a15-a8d0-12082f4b0e90)
+![diagramaf](https://github.com/user-attachments/assets/3b1179c6-5a30-4775-afcb-2edabaf228cb)
 
 ## Clases
 ![acreditacion](https://github.com/user-attachments/assets/72b7fca3-5d94-4f60-b46b-822591d90f45)
 
 ![costos](https://github.com/user-attachments/assets/95fe6dd2-f6c5-424d-a695-5c49e9aa983a)
 ![puntosdeventa](https://github.com/user-attachments/assets/12f9f4fe-9405-4bfa-bae8-b43d792300ab)
+
