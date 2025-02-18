@@ -53,7 +53,7 @@ A continuación se presenta el archivo application.properties configurado para e
 ```
 spring.application.name=api-gateway
 server.port=8082
-eureka.client.service-url.defaultZone=http://localhost:8010/eureka
+eureka.client.service-url.defaultZone=http://discovery-server:8010/eureka
 
 spring.cloud.gateway.discovery.locator.enabled=true
 spring.cloud.gateway.discovery.locator.lower-case-service-id=true
@@ -84,6 +84,11 @@ spring.cloud.gateway.discovery.locator.lower-case-service-id=true
 *Pruebas Unitarias*
 
 - Las pruebas unitarias se han implementado utilizando JUnit y Mockito.
+
+*Swagger*
+
+- Accede a la documentacion mediante sus respectivos archivos yml
+
 ### Ejecución del Proyecto ###
 
 *Clona el repositorio:*
@@ -94,16 +99,16 @@ git clone https://github.com/DeniseMDB/java-challenge
 
 *Levanta los servicios:*
 
-*Configura las bases de datos (sera necesario crear una Base de Datos llamada "acreditaciones")*.
-
-*Ejecuta cada servicio mediante tu IDE o usando:*
+*Mediante el uso de docker podras buildear cada imagen y correr sus contenedores*.
 ```
-mvn spring-boot:run
-```
+docker-compose up -d
+``` 
 
 *Accede al gateway en el puerto 8082 y utiliza Postman para probar los endpoints.*
 
-## Coverage Report
-![coverage report](https://github.com/user-attachments/assets/b884377e-0c91-4a80-910d-170400e3e07d)
+
+## Coverage Report 
+**Servicio Challenge-PVD**
+![coverage report](https://github.com/user-attachments/assets/1dfbb07f-c5cd-472e-84da-33d7fcf744a1)
 
 
