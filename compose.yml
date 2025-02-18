@@ -51,6 +51,7 @@ services:
     container_name: api-gateway
     environment:
       eureka.client.serviceUrl.defaultZone: http://discovery-server:8010/eureka
+      IP_ADDR: ${IP_ADDR}
     build:
       context: ./ApiGateway/ApiGateway/
       dockerfile: Dockerfile
