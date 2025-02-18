@@ -96,6 +96,14 @@ spring.cloud.gateway.discovery.locator.lower-case-service-id=true
 ```
 git clone https://github.com/DeniseMDB/java-challenge
 ```
+*Setea la variable de entorno:*
+- Importante! Dentro de la carpeta encontraras un archivo .env.
+- Para editarlo: click izquierdo sobre '.env', seleccionar Editar/Abrir con Bloc de Notas
+- Ingresar tu ip address para que corra correctamente. Si no sabes cual es podes ingresar a:
+https://www.cualesmiip.com/ y podras copiar su valor.
+```
+IP_ADDR: "ingresa tu ip address"
+```
 
 *Levanta los servicios:*
 
@@ -104,7 +112,18 @@ git clone https://github.com/DeniseMDB/java-challenge
 docker-compose up -d
 ``` 
 
-*Accede al gateway en el puerto 8082 y utiliza Postman para probar los endpoints.*
+*Accede al Api Gateway en el puerto 8082, utiliza Postman para probar los endpoints.*
+
+- Por ejemplo para testear el servicio de Challenge-PVD creando una solicitud `GET` a la ruta:
+```
+localhost:8082/challenge-pdv/v1/costos
+``` 
+- O el servicio de Acreditaciones enviando un `POST` a la ruta:
+
+```
+localhost:8082/acreditaciones/v1/acreditacion?cost=50.0&id=1
+``` 
+
 
 
 ## Coverage Report 
