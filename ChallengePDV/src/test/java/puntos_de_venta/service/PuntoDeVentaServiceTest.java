@@ -13,7 +13,6 @@ import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.PuntoDeVentaRepository;
 
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
