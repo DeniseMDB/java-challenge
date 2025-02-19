@@ -20,7 +20,7 @@ import static puntos_de_venta.utils.Common.*;
 
 @Service
 @Transactional
-public class PuntoDeVentaService {
+public class PuntoDeVentaService implements IPuntoDeVentaService{
 
     private final PuntoDeVentaRepository puntoDeVentaRepository;
     private static final Logger log = LoggerFactory.getLogger(PuntoDeVentaService.class);
@@ -34,6 +34,7 @@ public class PuntoDeVentaService {
      *
      * @return a list of all points of sale.
      */
+    @Override
     public List<PuntoDeVenta> findAll() {
         log.info("Retrieving all points of sale");
         List<PuntoDeVenta> puntosDeVenta = puntoDeVentaRepository.findAll();
@@ -52,8 +53,13 @@ public class PuntoDeVentaService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws RuntimeException if a point of sale with the same name already exists.
      */
+    @Override
     public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
         log.info("Adding new point of sale: Name = {}", puntoDeVentaDTO.getName());
+        if(puntoDeVentaDTO.getName().isEmpty()){
+            log.error("Must provide name for PVD");
+            throw new IllegalArgumentException("Must provide name");
+        }
         Optional<PuntoDeVenta> puntoDeVentaCheck = puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName());
         if (puntoDeVentaCheck.isPresent()){
             String errorMessage = String.format(PVD_ALREADY_EXISTS, puntoDeVentaCheck.get().getId());
@@ -74,6 +80,7 @@ public class PuntoDeVentaService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws NoSuchElementException if the point of sale does not exist.
      */
+    @Override
     public ResponseEntity<String> updatePuntoDeVenta(Long id, PuntoDeVentaDTO puntoDeVentaActualizado) {
         log.info("Updating point of sale with ID = {} ", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
@@ -95,6 +102,7 @@ public class PuntoDeVentaService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws NoSuchElementException if the point of sale does not exist.
      */
+    @Override
     public ResponseEntity<String> deletePuntoDeVenta(Long id) {
         log.info("Deleting point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
@@ -114,6 +122,7 @@ public class PuntoDeVentaService {
      * @return a ResponseEntity containing the found point of sale.
      * @throws NoSuchElementException if the point of sale does not exist.
      */
+    @Override
     public ResponseEntity<PuntoDeVenta> findById(Long id) {
         log.info("Retrieving point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);

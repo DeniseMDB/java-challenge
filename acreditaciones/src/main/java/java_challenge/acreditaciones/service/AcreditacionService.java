@@ -21,7 +21,7 @@ import static java_challenge.acreditaciones.utils.CommonConstants.CHALLENGE_PVD_
 
 @Service
 @Transactional
-public class AcreditacionService {
+public class AcreditacionService implements IAcreditacionesService{
 
     private final AcreditacionRepository acreditacionRepository;
     private final RestTemplate restTemplate;
@@ -40,6 +40,7 @@ public class AcreditacionService {
      * @return a ResponseEntity containing the created Acreditacion.
      * @throws NoSuchElementException if the PuntoDeVenta with the given ID is not found.
      */
+    @Override
     public ResponseEntity<Acreditacion> saveAcreditacion(Double cost, Long id) {
         log.info("Starting saveAcreditacion process with cost = {} and PuntoDeVenta ID = {}", cost, id);
         Acreditacion acreditacion = new Acreditacion();
@@ -65,6 +66,7 @@ public class AcreditacionService {
      * @return a ResponseEntity containing a list of Acreditaciones.
      * @throws NoSuchElementException if no Acreditaciones are found in the database.
      */
+    @Override
     public ResponseEntity<List<Acreditacion>> findAll() {
         log.info("Fetching all Acreditaciones from the database");
         List<Acreditacion> acreditaciones = acreditacionRepository.findAll();

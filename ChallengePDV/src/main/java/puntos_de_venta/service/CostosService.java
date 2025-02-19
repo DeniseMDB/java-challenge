@@ -32,7 +32,7 @@ import puntos_de_venta.repository.PuntoDeVentaRepository;
 
 @Service
 @Transactional
-public class CostosService {
+public class CostosService implements ICostosService{
 
     private final CostosRepository costosRepository;
     private final PuntoDeVentaRepository puntoDeVentaRepository;
@@ -48,6 +48,7 @@ public class CostosService {
      *
      * @return a list of all costs.
      */
+    @Override
     public ResponseEntity<List<Costos>> findAll(){
         log.info("Retrieving all costs");
         List<Costos> costos = costosRepository.findAll();
@@ -65,6 +66,7 @@ public class CostosService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws IllegalArgumentException if the price is below 0 or the cost already exists.
      */
+    @Override
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
         log.info("Adding new cost: Origin ID = {}, Destination ID = {}, Cost = {}",
                 costosDTO.getOriginId(), costosDTO.getDestinationId(), costosDTO.getPrice());
@@ -98,6 +100,7 @@ public class CostosService {
      * @return the {@link PuntoDeVenta} entity if found.
      * @throws NoSuchElementException if the point of sale does not exist.
      */
+    @Override
     public PuntoDeVenta validateExistence(Long puntoDeVentaId) {
         return puntoDeVentaRepository.findById(puntoDeVentaId)
                 .orElseThrow(() -> new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,puntoDeVentaId)));
@@ -111,6 +114,7 @@ public class CostosService {
      * @return a ResponseEntity indicating the result of the operation.
      * @throws NoSuchElementException if the cost or points of sale do not exist.
      */
+    @Override
     public ResponseEntity<String> removeCost(Long originId, Long destinationId) {
         log.info("Removing cost: Origin ID = {}, Destination ID = {}", originId, destinationId);
         PuntoDeVenta origin = validateExistence(originId);
@@ -129,6 +133,7 @@ public class CostosService {
      * @param originId the ID of the origin point of sale.
      * @return a map containing the destination names as keys and their costs as values.
      */
+    @Override
     public Map<String, Double> getDirectConnections(Long originId) {
         log.info("Retrieving direct connections for Origin ID = {}", originId);
         PuntoDeVenta origin = validateExistence(originId);
@@ -148,6 +153,7 @@ public class CostosService {
      * @return a {@link PathDTO} containing the shortest path and its total cost.
      * @throws NoSuchElementException if no path is available.
      */
+    @Override
     public PathDTO getShortestPath(Long originId, Long destinationId) {
         log.info("Calculating shortest path: Origin ID = {}, Destination ID = {}", originId, destinationId);
         PuntoDeVenta origin = validateExistence(originId);
