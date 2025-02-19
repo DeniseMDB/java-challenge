@@ -38,7 +38,9 @@ public class PuntoDeVentaService {
         log.info("Retrieving all points of sale");
         List<PuntoDeVenta> puntosDeVenta = puntoDeVentaRepository.findAll();
         if (puntosDeVenta.isEmpty()) {
-            throw new PuntoDeVentaNotFoundException("NO PDV FOUND");
+            String errorMessage = "No points of sale found";
+            log.error(errorMessage);
+            throw new PuntoDeVentaNotFoundException(errorMessage);
         }
         return (List<PuntoDeVenta>) puntoDeVentaRepository.findAll();
     }
@@ -52,8 +54,11 @@ public class PuntoDeVentaService {
      */
     public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
         log.info("Adding new point of sale: Name = {}", puntoDeVentaDTO.getName());
-        if (puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName()).isPresent()){
-            throw new PuntoDeVentaAlreadyExistsException(String.format(PVD_ALREADY_EXISTS, puntoDeVentaDTO.getId()));
+        Optional<PuntoDeVenta> puntoDeVentaCheck = puntoDeVentaRepository.findPuntoDeVentaByName(puntoDeVentaDTO.getName());
+        if (puntoDeVentaCheck.isPresent()){
+            String errorMessage = String.format(PVD_ALREADY_EXISTS, puntoDeVentaCheck.get().getId());
+            log.error(errorMessage);
+            throw new PuntoDeVentaAlreadyExistsException(errorMessage);
         }
             PuntoDeVenta puntoDeVenta = new PuntoDeVenta();
             puntoDeVenta.setName(puntoDeVentaDTO.getName());
@@ -77,7 +82,10 @@ public class PuntoDeVentaService {
             puntoDeVenta.setName(puntoDeVentaActualizado.getName());
             puntoDeVentaRepository.save(puntoDeVenta);
             return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_UPDATED);
-        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
+        } else {
+            String errorMessage = String.format(PVD_NOT_FOUND, id);
+            log.error(errorMessage);
+            throw new PuntoDeVentaNotFoundException(errorMessage);}
     }
 
     /**
@@ -93,7 +101,10 @@ public class PuntoDeVentaService {
         if(puntoDeVentaOptional.isPresent()){
             puntoDeVentaRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_DELETED);
-        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
+        } else {
+            String errorMessage = String.format(PVD_NOT_FOUND, id);
+            log.error(errorMessage);
+            throw new PuntoDeVentaNotFoundException(errorMessage);}
     }
     
     /**
@@ -108,6 +119,9 @@ public class PuntoDeVentaService {
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
         if(puntoDeVentaOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.OK).body(puntoDeVentaOptional.get());
-        } else {throw new PuntoDeVentaNotFoundException(String.format(PVD_NOT_FOUND,id));}
+        } else {
+            String errorMessage = String.format(PVD_NOT_FOUND, id);
+            log.error(errorMessage);
+            throw new PuntoDeVentaNotFoundException(errorMessage);}
     }
 }

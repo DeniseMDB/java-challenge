@@ -1,11 +1,27 @@
 package puntos_de_venta.service;
 
-import jakarta.transaction.Transactional;
+import static puntos_de_venta.utils.Common.PVD_NOT_FOUND;
+import static puntos_de_venta.utils.Common.SUCCESFULLY_CREATED;
+import static puntos_de_venta.utils.Common.SUCCESFULLY_DELETED;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.PriorityQueue;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import jakarta.transaction.Transactional;
 import puntos_de_venta.dtos.CostosDTO;
 import puntos_de_venta.dtos.PathDTO;
 import puntos_de_venta.exceptions.PuntoDeVentaNotFoundException;
@@ -13,11 +29,6 @@ import puntos_de_venta.model.Costos;
 import puntos_de_venta.model.PuntoDeVenta;
 import puntos_de_venta.repository.CostosRepository;
 import puntos_de_venta.repository.PuntoDeVentaRepository;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static puntos_de_venta.utils.Common.*;
 
 @Service
 @Transactional
@@ -41,6 +52,7 @@ public class CostosService {
         log.info("Retrieving all costs");
         List<Costos> costos = costosRepository.findAll();
         if(costos.isEmpty()){
+            log.error("No costs found in the database.");
             throw new NoSuchElementException("NO COSTOS FOUND");
         }
         return ResponseEntity.ok(costos);
@@ -56,14 +68,17 @@ public class CostosService {
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
         log.info("Adding new cost: Origin ID = {}, Destination ID = {}, Cost = {}",
                 costosDTO.getOriginId(), costosDTO.getDestinationId(), costosDTO.getPrice());
-        if (costosDTO.getPrice() < 0) {
-            throw new IllegalArgumentException("Price cannot under 0");
+        if (costosDTO.getPrice() <= 0) {
+            log.error("Invalid price: Price cannot be under 0. Provided value: {}", costosDTO.getPrice());    
+            throw new IllegalArgumentException("Price cannot be under 0");
         }
 
         PuntoDeVenta origin = validateExistence(costosDTO.getOriginId());
         PuntoDeVenta destination = validateExistence(costosDTO.getDestinationId());
 
         if(costosRepository.existsByPointOfOriginIdAndPointOfDestinationId(costosDTO.getOriginId(), costosDTO.getDestinationId())){
+            log.error("Cost already exists between Origin ID = {} and Destination ID = {}",
+                    costosDTO.getOriginId(), costosDTO.getDestinationId());
             throw new IllegalArgumentException("The cost already exists");
         }
 
@@ -162,6 +177,7 @@ public class CostosService {
         }
 
         if (!prices.containsKey(destination) || prices.get(destination) == Double.MAX_VALUE) {
+            log.error("No path available from Origin ID = {} to Destination ID = {}", originId, destinationId);
             throw new NoSuchElementException("There is no path available for destination");
         }
 

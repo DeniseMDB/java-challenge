@@ -56,7 +56,6 @@ class PuntoDeVentaServiceTest {
         // Given
         PuntoDeVentaDTO puntoDeVentaDTO = PuntoDeVentaDTO.builder()
                 .name("Existing PDV")
-                .id(1L)
                 .build();
         PuntoDeVenta existingPuntoDeVenta = new PuntoDeVenta(1L, "Existing PDV");
 
