@@ -22,6 +22,8 @@
 
 *Postman: Para la validación y pruebas de los endpoints expuestos.*
 
+*Caffeine: Para la implementación de cache en los servicios de Puntos de Venta y Costos, mejorando la eficiencia en el acceso a datos frecuentemente solicitados.*
+
 **Arquitectura del Proyecto**
 
 La aplicación se estructura en varios microservicios interconectados a través del **_API Gateway_**. Cada microservicio es responsable de una funcionalidad específica:
@@ -45,6 +47,12 @@ La aplicación se estructura en varios microservicios interconectados a través 
 - Configuración para enrutamiento dinámico entre servicios usando Spring Cloud Gateway.
 
 - Descubrimiento de servicios habilitado mediante *_Eureka_*.
+
+**Cache - Caffeine**
+
+
+ Se ha implementado Caffeine como sistema de caching en el servicio de Challenge-PDV para mejorar el rendimiento y la eficiencia en el cálculo y almacenamiento de los datos de puntos de venta y costos.
+ El cache se ha configurado para almacenar los resultados de los puntos de venta y los costos durante un período de tiempo específico, lo que reduce la carga en la base de datos y mejora el tiempo de respuesta para solicitudes frecuentes.
 
 *Configuración del Gateway*
 
