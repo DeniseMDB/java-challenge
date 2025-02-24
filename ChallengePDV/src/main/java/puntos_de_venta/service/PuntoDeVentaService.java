@@ -3,6 +3,8 @@ package puntos_de_venta.service;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
      * @return a list of all points of sale.
      */
     @Override
+    @Cacheable(value = "puntosCache", key = "'all'")
     public List<PuntoDeVenta> findAll() {
         log.info("Retrieving all points of sale");
         List<PuntoDeVenta> puntosDeVenta = puntoDeVentaRepository.findAll();
@@ -43,7 +46,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
             log.error(errorMessage);
             throw new PuntoDeVentaNotFoundException(errorMessage);
         }
-        return (List<PuntoDeVenta>) puntoDeVentaRepository.findAll();
+        return puntoDeVentaRepository.findAll();
     }
 
     /**
@@ -54,6 +57,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
      * @throws RuntimeException if a point of sale with the same name already exists.
      */
     @Override
+    @CacheEvict(value = "puntosCache", allEntries = true)
     public ResponseEntity<String> savePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
         log.info("Adding new point of sale: Name = {}", puntoDeVentaDTO.getName());
         if(puntoDeVentaDTO.getName().isEmpty()){
@@ -81,6 +85,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     @Override
+    @CacheEvict(value = "puntosCache", allEntries = true)
     public ResponseEntity<String> updatePuntoDeVenta(Long id, PuntoDeVentaDTO puntoDeVentaActualizado) {
         log.info("Updating point of sale with ID = {} ", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
@@ -103,6 +108,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     @Override
+    @CacheEvict(value = "puntosCache", allEntries = true)
     public ResponseEntity<String> deletePuntoDeVenta(Long id) {
         log.info("Deleting point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);
@@ -114,7 +120,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
             log.error(errorMessage);
             throw new PuntoDeVentaNotFoundException(errorMessage);}
     }
-    
+
     /**
      * Finds a point of sale by its ID.
      *
@@ -123,6 +129,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService{
      * @throws NoSuchElementException if the point of sale does not exist.
      */
     @Override
+    @Cacheable(value = "puntosCache", key = "#id")
     public ResponseEntity<PuntoDeVenta> findById(Long id) {
         log.info("Retrieving point of sale with ID = {}", id);
         Optional<PuntoDeVenta> puntoDeVentaOptional= puntoDeVentaRepository.findById(id);

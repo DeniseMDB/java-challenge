@@ -31,9 +31,9 @@ public class CostosController {
         return costosService.addCost(costosDTO);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> removeCost(@RequestParam Long originId, @RequestParam Long destinationId) {
-        return costosService.removeCost(originId, destinationId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> removeCost(@PathVariable Long id) {
+        return costosService.removeCost(id);
     }
 
     @GetMapping("/direct")

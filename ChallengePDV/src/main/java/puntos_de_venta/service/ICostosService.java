@@ -13,7 +13,7 @@ public interface ICostosService {
     ResponseEntity<List<Costos>> findAll();
     ResponseEntity<String> addCost(CostosDTO costosDTO);
     PuntoDeVenta validateExistence(Long puntoDeVentaId);
-    ResponseEntity<String> removeCost(Long originId, Long destinationId);
+    ResponseEntity<String> removeCost(Long id);
     Map<String, Double> getDirectConnections(Long originId);
     PathDTO getShortestPath(Long originId, Long destinationId);
 }

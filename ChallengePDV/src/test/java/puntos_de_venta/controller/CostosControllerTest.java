@@ -61,10 +61,10 @@ class CostosControllerTest {
     @Test
     void removeCost_shouldRemoveCostSuccessfully() {
         // Given
-        given(costosService.removeCost(1L, 2L)).willReturn(ResponseEntity.ok("Cost removed successfully"));
+        given(costosService.removeCost(1L)).willReturn(ResponseEntity.ok("Cost removed successfully"));
 
         // When
-        ResponseEntity<String> response = costosController.removeCost(1L, 2L);
+        ResponseEntity<String> response = costosController.removeCost(1L);
 
         // Then
         assertNotNull(response);

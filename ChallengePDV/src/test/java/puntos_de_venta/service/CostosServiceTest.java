@@ -77,16 +77,13 @@ class CostosServiceTest {
     @Test
     void removeCost_shouldRemoveCostSuccessfully() {
         // Given
-        PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
-        PuntoDeVenta destination = new PuntoDeVenta(2L, "Destination");
-        Costos cost = new Costos(1L, origin, destination, 100.0);
+        Long costId = 1L;
+        Costos cost = new Costos(costId, new PuntoDeVenta(1L, "Origin"), new PuntoDeVenta(2L, "Destination"), 100.0);
 
-        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(origin));
-        given(puntoDeVentaRepository.findById(2L)).willReturn(Optional.of(destination));
-        given(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)).willReturn(Optional.of(cost));
+        given(costosRepository.findById(costId)).willReturn(Optional.of(cost));
 
         // When
-        ResponseEntity<String> response = costosService.removeCost(1L, 2L);
+        ResponseEntity<String> response = costosService.removeCost(costId);
 
         // Then
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -96,15 +93,15 @@ class CostosServiceTest {
     @Test
     void removeCost_shouldThrowExceptionWhenCostNotFound() {
         // Given
-        PuntoDeVenta origin = new PuntoDeVenta(1L, "Origin");
-        PuntoDeVenta destination = new PuntoDeVenta(2L, "Destination");
-
-        given(puntoDeVentaRepository.findById(1L)).willReturn(Optional.of(origin));
-        given(puntoDeVentaRepository.findById(2L)).willReturn(Optional.of(destination));
-        given(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)).willReturn(Optional.empty());
+        Long nonExistentCostId = 99L;
+        given(costosRepository.findById(nonExistentCostId)).willReturn(Optional.empty());
 
         // When / Then
-        assertThrows(NoSuchElementException.class, () -> costosService.removeCost(1L, 2L));
+        NoSuchElementException exception = assertThrows(NoSuchElementException.class,
+                () -> costosService.removeCost(nonExistentCostId));
+
+        assertThrows(NoSuchElementException.class, () -> costosService.removeCost(nonExistentCostId));
+        assertEquals("COST NOT FOUND", exception.getMessage());
     }
 
     @Test

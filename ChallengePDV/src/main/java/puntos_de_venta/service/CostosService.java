@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,7 @@ public class CostosService implements ICostosService{
      * @return a list of all costs.
      */
     @Override
+    @Cacheable(value = "costosCache", key = "'all'")
     public ResponseEntity<List<Costos>> findAll(){
         log.info("Retrieving all costs");
         List<Costos> costos = costosRepository.findAll();
@@ -67,6 +70,7 @@ public class CostosService implements ICostosService{
      * @throws IllegalArgumentException if the price is below 0 or the cost already exists.
      */
     @Override
+    @CacheEvict(value = "costosCache", allEntries = true)
     public ResponseEntity<String> addCost(CostosDTO costosDTO) {
         log.info("Adding new cost: Origin ID = {}, Destination ID = {}, Cost = {}",
                 costosDTO.getOriginId(), costosDTO.getDestinationId(), costosDTO.getPrice());
@@ -109,21 +113,18 @@ public class CostosService implements ICostosService{
     /**
      * Removes an existing cost between two points of sale.
      *
-     * @param originId      the ID of the origin point of sale.
-     * @param destinationId the ID of the destination point of sale.
+     * @param id      the ID of the cost.
      * @return a ResponseEntity indicating the result of the operation.
      * @throws NoSuchElementException if the cost or points of sale do not exist.
      */
     @Override
-    public ResponseEntity<String> removeCost(Long originId, Long destinationId) {
-        log.info("Removing cost: Origin ID = {}, Destination ID = {}", originId, destinationId);
-        PuntoDeVenta origin = validateExistence(originId);
-        PuntoDeVenta destination = validateExistence(destinationId);
-
-        Optional<Costos> cost = Optional.ofNullable(costosRepository.findByPointOfOriginAndPointOfDestination(origin, destination)
+    @CacheEvict(value = "costosCache", allEntries = true)
+    public ResponseEntity<String> removeCost(Long id) {
+        log.info("Removing cost: ID = {}", id);
+        Optional<Costos> cost = Optional.ofNullable(costosRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("COST NOT FOUND")));
 
-        costosRepository.deleteById(cost.get().getId());
+        costosRepository.deleteById(cost. get().getId());
         return ResponseEntity.status(HttpStatus.OK).body(SUCCESFULLY_DELETED);
     }
 
@@ -134,6 +135,7 @@ public class CostosService implements ICostosService{
      * @return a map containing the destination names as keys and their costs as values.
      */
     @Override
+    @Cacheable(value = "directConnections", key = "#originId")
     public Map<String, Double> getDirectConnections(Long originId) {
         log.info("Retrieving direct connections for Origin ID = {}", originId);
         PuntoDeVenta origin = validateExistence(originId);
@@ -154,6 +156,7 @@ public class CostosService implements ICostosService{
      * @throws NoSuchElementException if no path is available.
      */
     @Override
+    @Cacheable(value = "shortestPath", key = "#originId + '-' + #destinationId")
     public PathDTO getShortestPath(Long originId, Long destinationId) {
         log.info("Calculating shortest path: Origin ID = {}, Destination ID = {}", originId, destinationId);
         PuntoDeVenta origin = validateExistence(originId);
